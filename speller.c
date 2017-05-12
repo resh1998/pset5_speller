@@ -106,6 +106,34 @@ int main(int argc, char *argv[])
             
         }
 
+        // we must have found a whole word
+        else if (ind > 0)
+        {
+            // terminate current word
+            word[ind] = '\0';
+
+            // update counter
+            words++;
+
+            // check word's spelling
+            getrusage(RUSAGE_SELF, &before);
+            bool misspelled = !check(word);
+            getrusage(RUSAGE_SELF, &after);
+
+            // update benchmark
+            time_check += calculate(&before, &after);
+
+            // print word if misspelled
+            if (misspelled)
+            {
+                printf("%s\n", word);
+                misspellings++;
+            }
+
+            // prepare for next word
+            ind = 0;
+        }
+    }
     
     return 0;
 }
