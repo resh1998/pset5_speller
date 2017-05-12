@@ -93,6 +93,18 @@ int main(int argc, char *argv[])
                 }
             }
         }
+        
+        // ignore words with numbers (like MS Word can)
+        else if (isdigit(x))
+        {
+            // consume remainder of alphanumeric string
+            while ((x = fgetc(input)) != EOF && isalnum(input))
+            {
+            // prepare for new word
+                ind = 0;
+            }    
+            
+        }
 
     
     return 0;
