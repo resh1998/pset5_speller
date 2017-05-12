@@ -50,7 +50,26 @@ int main(int argc, char *argv[])
         return 1;
     }
     
-    
+    // calculate time to load dictionary
+    time_load = calculate(&before, &after);
+
+    // try to open text
+    char *text = (argc == 3) ? argv[2] : argv[1];
+    FILE *input = fopen(text, "r");
+    if (input == NULL)
+    {
+        printf("Could not open %s.\n", text);
+        unload();
+        return 1;
+    }
+
+    // prepare to report misspellings
+    printf("\nMISSPELLED WORDS\n\n");
+
+    // prepare to spell-check
+    int ind = 0, misspellings = 0, words = 0;
+    char word[LENGTH + 1];
+
     
     return 0;
 }
