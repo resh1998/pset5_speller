@@ -69,6 +69,30 @@ int main(int argc, char *argv[])
     // prepare to spell-check
     int ind = 0, misspellings = 0, words = 0;
     char word[LENGTH + 1];
+    
+    // spell-check each word in text
+    for (int x = fgetc(input); x != EOF; x = fgetc(input))
+    {
+        // allow only alphabetical characters and apostrophes
+        if (isalpha(x) || (x == '\'' && ind > 0))
+        {
+            // append character to word
+            word[ind] = x;
+            ind++;
+
+            // ignore alphabetical strings too long to be words
+            if (ind > LENGTH)
+            {
+                // consume remainder of alphabetical string
+                while ((x = fgetc(input)) != EOF && isalpha(x))
+                {
+
+                    // prepare for new word
+                    ind = 0;
+                
+                }
+            }
+        }
 
     
     return 0;
