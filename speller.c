@@ -135,5 +135,71 @@ int main(int argc, char *argv[])
         }
     }
     
+    // check whether there was an error
+    if (ferror(input))
+    {
+        fclose(input);
+        printf("Error reading %s.\n", text);
+        unload();
+        return 1;
+    }
+
+    // close text
+    fclose(input);
+
+    // determine dictionary's size
+    getrusage(RUSAGE_SELF, &before);
+    unsigned int n = size();
+    getrusage(RUSAGE_SELF, &after);
+
+    // calculate time to determine dictionary's size
+    time_size = calculate(&before, &after);
+
+    // unload dictionary
+    getrusage(RUSAGE_SELF, &before);
+    bool unloaded = unload();
+    getrusage(RUSAGE_SELF, &after);
+
+    // abort if dictionary not unloaded
+    if (!unloaded)
+    {
+        printf("Could not unload %s.\n", dictionary);
+        return 1;
+    }
+
+    // calculate time to unload dictionary
+    time_unload = calculate(&before, &after);
+
+    // report benchmarks
+    printf("\nWORDS MISSPELLED:     %d\n", misspellings);
+    printf("WORDS IN DICTIONARY:  %d\n", n);
+    printf("WORDS IN TEXT:        %d\n", words);
+    printf("TIME IN load:         %.2f\n", time_load);
+    printf("TIME IN check:        %.2f\n", time_check);
+    printf("TIME IN size:         %.2f\n", time_size);
+    printf("TIME IN unload:       %.2f\n", time_unload);
+    printf("TIME IN TOTAL:        %.2f\n\n", 
+    time_load + time_check + time_size + time_unload);
+
+    
     return 0;
+}
+
+/**
+ * Returns number of seconds between b and a.
+ */
+double calculate(const struct rusage *befr, const struct rusage *aftr)
+{
+    if (befr == NULL || aftr == NULL)
+    {
+        return 0.0;
+    }
+    else
+    {
+        return ((((aftr->ru_utime.tv_sec * 1000000 + aftr->ru_utime.tv_usec) - 
+                 (befr->ru_utime.tv_sec * 1000000 + befr->ru_utime.tv_usec)) + 
+                ((aftr->ru_stime.tv_sec * 1000000 + aftr->ru_stime.tv_usec) - 
+                 (befr->ru_stime.tv_sec * 1000000 + befr->ru_stime.tv_usec)))
+                / 1000000.0);
+    }
 }
